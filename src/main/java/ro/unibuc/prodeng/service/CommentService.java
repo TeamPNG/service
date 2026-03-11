@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.unibuc.prodeng.model.CommentEntity;
 import ro.unibuc.prodeng.repository.CommentRepository;
+import ro.unibuc.prodeng.repository.PhotoRepository;
 import ro.unibuc.prodeng.request.CreateCommentRequest;
 import ro.unibuc.prodeng.response.CommentResponse;
+import ro.unibuc.prodeng.exception.EntityNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +18,15 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private PhotoRepository photoRepository;
+
     public CommentResponse createComment(CreateCommentRequest request) {
+        // Check if the photo exists before saving the comment
+        if (!photoRepository.existsById(request.imageId())) {
+            throw new EntityNotFoundException("Photo not found with id: " + request.imageId());
+        }
+
         CommentEntity comment = new CommentEntity(
                 request.imageId(),
                 request.userEmail(),

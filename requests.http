@@ -111,3 +111,5 @@ Content-Type: application/json
 
 ### Get comments for a specific image
 GET http://localhost:8080/api/comments/image/test-image-123
+
+#
