@@ -22,6 +22,22 @@ Content-Type: application/json
     "email": "prisoner24601@france.fr"
 }
 
+
+
+### Create a photo
+# @name createPhoto
+POST http://localhost:8080/api/photos
+Content-Type: application/json
+
+{
+  "title": "cat picture",
+  "description": "cute cat picture",
+  "location":"bucharest",
+  "URL":"catcatcat",
+  "category":"animals",
+  "uploadedBydUserId":"2"
+}
+
 ### Get user by ID (uses ID from createUser response)
 GET http://localhost:8080/api/users/{{createUser.response.body.id}}
 
