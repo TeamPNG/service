@@ -32,8 +32,14 @@ public class PhotoService {
         return toResponse(photo);
     }
 
+
+    public List<PhotoResponse>  getPhotoByUserId(String userId) {
+        return photoRepository.getPhotoByuploadedBydUserId(userId).stream()
+            .map(this::toResponse)
+            .collect(Collectors.toList());
+    }
+
     public PhotoResponse createPhoto(CreatePhotoRequest request) {
-        // Check if ISBN already exists
         if (photoRepository.findByTitle(request.title()).equals(request.title())) {
             throw new IllegalArgumentException("Photo with title " + request.title() + " already exists");
         }

@@ -22,20 +22,28 @@ public class PhotoController {
 
     @GetMapping
     public ResponseEntity<List<PhotoResponse>> getAllPhotos() {
-        List<PhotoResponse> books = photoService.getAllPhotos();
-        return ResponseEntity.ok(books);
+        List<PhotoResponse> photos = photoService.getAllPhotos();
+        return ResponseEntity.ok(photos);
     }
+
+    //to add param category
 
     @GetMapping("/{id}")
     public ResponseEntity<PhotoResponse> getPhotoById(@PathVariable String id) {
-        PhotoResponse book = photoService.getPhotoById(id);
-        return ResponseEntity.ok(book);
+        PhotoResponse photo = photoService.getPhotoById(id);
+        return ResponseEntity.ok(photo);
+    }
+
+    @GetMapping("/{userid}")
+    public ResponseEntity<List<PhotoResponse>> getPhotoByUserId(@PathVariable String UserId) {
+        List<PhotoResponse> photo = photoService.getPhotoByUserId(UserId);
+        return ResponseEntity.ok(photo);
     }
 
     @PostMapping
     public ResponseEntity<PhotoResponse> createPhoto(@Valid @RequestBody CreatePhotoRequest request) {
-        PhotoResponse book = photoService.createPhoto(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(book);
+        PhotoResponse photo = photoService.createPhoto(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(photo);
     }
 
     @DeleteMapping("/{id}")
@@ -44,9 +52,9 @@ public class PhotoController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/available")
+    @GetMapping("/category")
     public ResponseEntity<List<PhotoResponse>> getPhotosByCategory(String category) {
-        List<PhotoResponse> books = photoService.getPhotosByCategory(category);
-        return ResponseEntity.ok(books);
+        List<PhotoResponse> photos = photoService.getPhotosByCategory(category);
+        return ResponseEntity.ok(photos);
     }
 }

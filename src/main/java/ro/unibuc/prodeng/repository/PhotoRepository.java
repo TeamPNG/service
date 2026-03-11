@@ -10,7 +10,7 @@ import ro.unibuc.prodeng.model.PhotoEntity;
 @Repository
 public interface PhotoRepository extends MongoRepository<PhotoEntity, String> {
 
-    List<PhotoEntity> findByuploadedBydUserId(String uploadedBydUserId);
+    List<PhotoEntity> getPhotoByuploadedBydUserId(String uploadedBydUserId);
     List<PhotoEntity> findByTitle(String title);
     List<PhotoEntity> findByLocation(String location);
     List<PhotoEntity> findByCategory(String category);
