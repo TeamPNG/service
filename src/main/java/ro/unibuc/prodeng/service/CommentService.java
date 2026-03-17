@@ -51,4 +51,17 @@ public class CommentService {
                 comment.createdAt()
         );
     }
+
+    public CommentResponse getCommentById(String id) {
+        CommentEntity comment = commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
+        return toResponse(comment);
+    }
+
+    public void deleteComment(String id) {
+        if (!commentRepository.existsById(id)) {
+            throw new EntityNotFoundException("Comment not found with id: " + id);
+        }
+        commentRepository.deleteById(id);
+    }
 }
