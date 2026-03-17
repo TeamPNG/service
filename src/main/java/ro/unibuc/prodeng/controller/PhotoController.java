@@ -34,10 +34,10 @@ public class PhotoController {
         return ResponseEntity.ok(photo);
     }
 
-    @GetMapping("/{userid}")
-    public ResponseEntity<List<PhotoResponse>> getPhotoByUserId(@PathVariable String UserId) {
-        List<PhotoResponse> photo = photoService.getPhotoByUserId(UserId);
-        return ResponseEntity.ok(photo);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PhotoResponse>> getPhotoByUserId(@PathVariable String userId) {
+        List<PhotoResponse> photos = photoService.getPhotoByUserId(userId);
+        return ResponseEntity.ok(photos);
     }
 
     @PostMapping
@@ -53,7 +53,7 @@ public class PhotoController {
     }
 
     @GetMapping("/category")
-    public ResponseEntity<List<PhotoResponse>> getPhotosByCategory(String category) {
+    public ResponseEntity<List<PhotoResponse>> getPhotosByCategory(@RequestParam String category) {
         List<PhotoResponse> photos = photoService.getPhotosByCategory(category);
         return ResponseEntity.ok(photos);
     }

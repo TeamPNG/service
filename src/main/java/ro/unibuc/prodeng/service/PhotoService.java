@@ -40,7 +40,7 @@ public class PhotoService {
     }
 
     public PhotoResponse createPhoto(CreatePhotoRequest request) {
-        if (photoRepository.findByTitle(request.title()).equals(request.title())) {
+        if (!photoRepository.findByTitle(request.title()).isEmpty()) {
             throw new IllegalArgumentException("Photo with title " + request.title() + " already exists");
         }
 
