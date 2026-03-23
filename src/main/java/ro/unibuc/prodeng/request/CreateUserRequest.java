@@ -2,6 +2,7 @@ package ro.unibuc.prodeng.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import ro.unibuc.prodeng.model.UserRole;
 
 public record CreateUserRequest(
     @NotBlank(message = "Name is required")
@@ -9,5 +10,7 @@ public record CreateUserRequest(
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
-    String email
+    String email,
+    
+    UserRole role
 ) {}

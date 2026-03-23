@@ -1,14 +1,13 @@
 package ro.unibuc.prodeng.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ro.unibuc.prodeng.model.UserEntity;
+import ro.unibuc.prodeng.model.UserRole;
 import ro.unibuc.prodeng.repository.UserRepository;
 import ro.unibuc.prodeng.request.CreateUserRequest;
 import ro.unibuc.prodeng.response.UserResponse;
@@ -35,8 +34,8 @@ class UserServiceTest {
     void testGetAllUsers_withMultipleUsers_returnsAllUsers() {
         // Arrange
         List<UserEntity> users = Arrays.asList(
-                new UserEntity("1", "Alice", "alice@example.com"),
-                new UserEntity("2", "Bob", "bob@example.com")
+                new UserEntity("1", "Alice", "alice@example.com", UserRole.CONTENT_CREATOR),
+                new UserEntity("2", "Bob", "bob@example.com", UserRole.VIEWER)
         );
         when(userRepository.findAll()).thenReturn(users);
 
@@ -47,12 +46,14 @@ class UserServiceTest {
         assertEquals(2, result.size());
         assertEquals("Alice", result.get(0).name());
         assertEquals("Bob", result.get(1).name());
+        assertEquals(UserRole.CONTENT_CREATOR, result.get(0).role());
+        assertEquals(UserRole.VIEWER, result.get(1).role());
     }
 
     @Test
     void testGetUserById_existingUserRequested_returnsUser() throws EntityNotFoundException {
         // Arrange
-        UserEntity user = new UserEntity("1", "Alice", "alice@example.com");
+        UserEntity user = new UserEntity("1", "Alice", "alice@example.com", UserRole.CONTENT_CREATOR);
         when(userRepository.findById("1")).thenReturn(Optional.of(user));
 
         // Act
@@ -62,6 +63,7 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals("Alice", result.name());
         assertEquals("alice@example.com", result.email());
+        assertEquals(UserRole.CONTENT_CREATOR, result.role());
     }
 
     @Test
@@ -76,13 +78,13 @@ class UserServiceTest {
     @Test
     void testCreateUser_newUserWithValidData_createsAndReturnsUser() {
         // Arrange
-        CreateUserRequest request = new CreateUserRequest("Alice", "alice@example.com");
+        CreateUserRequest request = new CreateUserRequest("Alice", "alice@example.com", UserRole.CONTENT_CREATOR);
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> {
             UserEntity entity = invocation.getArgument(0);
             // Simulate MongoDB generating an ID for new entities
             String id = "generated-id-123";
-            return new UserEntity(id, entity.name(), entity.email());
+            return new UserEntity(id, entity.name(), entity.email(), entity.role());
         });
 
         // Act
@@ -93,19 +95,20 @@ class UserServiceTest {
         assertNotNull(result.id());
         assertEquals("Alice", result.name());
         assertEquals("alice@example.com", result.email());
+        assertEquals(UserRole.CONTENT_CREATOR, result.role());
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
     void testChangeName_existingUserRequested_changesNameSuccessfully() throws EntityNotFoundException {
         // Arrange
-        UserEntity existing = new UserEntity("1", "Alice", "alice@example.com");
+        UserEntity existing = new UserEntity("1", "Alice", "alice@example.com", UserRole.VIEWER);
         when(userRepository.findById("1")).thenReturn(Optional.of(existing));
         when(userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> {
             UserEntity entity = invocation.getArgument(0);
             // Simulate MongoDB generating an ID for new entities
             String id = entity.id() == null ? "generated-id-123" : entity.id();
-            return new UserEntity(id, entity.name(), entity.email());
+            return new UserEntity(id, entity.name(), entity.email(), entity.role());
         });
 
         // Act
@@ -116,6 +119,7 @@ class UserServiceTest {
         assertEquals("1", result.id());
         assertEquals("Alicia", result.name());
         assertEquals("alice@example.com", result.email());
+        assertEquals(UserRole.VIEWER, result.role());
     }
 
     @Test
