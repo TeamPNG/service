@@ -8,5 +8,10 @@ public record UserEntity(
     @Id
     String id,
     String name,
-    String email
-) {}
+    String email,
+    UserRole role
+) {
+    public UserEntity(String name, String email, UserRole role) {
+        this(null, name, email, role);
+    }
+}
