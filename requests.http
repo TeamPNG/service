@@ -30,7 +30,7 @@ POST http://localhost:8080/api/photos
 Content-Type: application/json
 
 {
-  "title": "cat picture",
+  "title": "cat pictur1e",
   "description": "cute cat picture",
   "location":"bucharest",
   "URL":"catcatcat",

@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import ro.unibuc.prodeng.model.UserEntity;
+import ro.unibuc.prodeng.model.UserRole;
 import ro.unibuc.prodeng.request.AssignTodoRequest;
 import ro.unibuc.prodeng.request.CreateTodoRequest;
 import ro.unibuc.prodeng.request.CreateUserRequest;
@@ -58,7 +59,7 @@ public class TodoSteps {
 
     @Given("a user named {word} with email {word}")
     public void createUser(String name, String email) throws Exception {
-        CreateUserRequest request = new CreateUserRequest(name, email);
+        CreateUserRequest request = new CreateUserRequest(name, email, UserRole.CONTENT_CREATOR);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<CreateUserRequest> entity = new HttpEntity<>(request, headers);
@@ -96,6 +97,7 @@ public class TodoSteps {
     }
 
     @When("the client reassigns the todo to {word}")
+    @SuppressWarnings("null")
     public void reassignTodo(String newAssigneeEmail) {
         AssignTodoRequest request = new AssignTodoRequest(newAssigneeEmail);
         HttpHeaders headers = new HttpHeaders();
