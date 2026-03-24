@@ -32,6 +32,7 @@ public class TodoService {
     }
 
     public TodoResponse getTodoById(String id) throws EntityNotFoundException {
+        @SuppressWarnings("null")
         TodoEntity todo = todoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id));
         UserEntity assignee = userService.getUserEntityById(todo.assignedUserId());
@@ -74,6 +75,7 @@ public class TodoService {
         return toResponse(saved, assignee);
     }
 
+    @SuppressWarnings("null")
     public void deleteTodo(String id) throws EntityNotFoundException {
         if (!todoRepository.existsById(id)) {
             throw new EntityNotFoundException(id);
@@ -81,6 +83,7 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
+    @SuppressWarnings("null")
     private TodoEntity getEntityById(String id) throws EntityNotFoundException {
         return todoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id));

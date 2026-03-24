@@ -47,8 +47,8 @@ public class PhotoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePhoto(@PathVariable String id) {
-        photoService.deletePhoto(id);
+    public ResponseEntity<Void> deletePhoto(@PathVariable String id, @RequestParam String userId) {
+        photoService.deletePhoto(id, userId);
         return ResponseEntity.noContent().build();
     }
 

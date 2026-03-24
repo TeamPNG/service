@@ -3,6 +3,7 @@ package ro.unibuc.prodeng.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ro.unibuc.prodeng.exception.EntityNotFoundException;
+import ro.unibuc.prodeng.model.UserRole;
 import ro.unibuc.prodeng.request.ChangeNameRequest;
 import ro.unibuc.prodeng.request.CreateUserRequest;
 import ro.unibuc.prodeng.response.UserResponse;
@@ -42,9 +43,9 @@ class UserControllerTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
     
-    private UserResponse testUser1 = new UserResponse("1", "John Doe", "john@example.com");
-    private UserResponse testUser2 = new UserResponse("2", "Jane Smith", "jane@example.com");
-    private CreateUserRequest createUserRequest = new CreateUserRequest("John Doe", "john@example.com");
+    private UserResponse testUser1 = new UserResponse("1", "John Doe", "john@example.com", UserRole.CONTENT_CREATOR);
+    private UserResponse testUser2 = new UserResponse("2", "Jane Smith", "jane@example.com", UserRole.VIEWER);
+    private CreateUserRequest createUserRequest = new CreateUserRequest("John Doe", "john@example.com", UserRole.CONTENT_CREATOR);
     private ChangeNameRequest changeNameRequest = new ChangeNameRequest("John Updated");
     
     @BeforeEach
@@ -52,6 +53,7 @@ class UserControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
+    @SuppressWarnings("null")
     @Test
     void testGetAllUsers_withMultipleUsers_returnsListOfUsers() throws Exception {
         // Arrange
@@ -73,6 +75,7 @@ class UserControllerTest {
         verify(userService, times(1)).getAllUsers();
     }
     
+    @SuppressWarnings("null")
     @Test
     void testGetAllUsers_withNoUsers_returnsEmptyList() throws Exception {
         // Arrange
@@ -87,6 +90,7 @@ class UserControllerTest {
         verify(userService, times(1)).getAllUsers();
     }
     
+    @SuppressWarnings("null")
     @Test
     void testGetUserById_existingUserRequested_returnsUser() throws Exception {
         // Arrange
@@ -104,6 +108,7 @@ class UserControllerTest {
         verify(userService, times(1)).getUserById(userId);
     }
     
+    @SuppressWarnings("null")
     @Test
     void testGetUserById_nonExistingUserRequested_returnsNotFound() throws Exception {
         // Arrange
@@ -118,6 +123,7 @@ class UserControllerTest {
         verify(userService, times(1)).getUserById(userId);
     }
     
+    @SuppressWarnings("null")
     @Test
     void testCreateUser_validRequestProvided_createsAndReturnsUser() throws Exception {
         // Arrange
@@ -135,11 +141,12 @@ class UserControllerTest {
         verify(userService, times(1)).createUser(any(CreateUserRequest.class));
     }
     
+    @SuppressWarnings("null")
     @Test
     void testUpdateUser_existingUserRequested_updatesAndReturnsUser() throws Exception {
         // Arrange
         String userId = "1";
-        UserResponse updatedUser = new UserResponse("1", "John Updated", "john@example.com");
+        UserResponse updatedUser = new UserResponse("1", "John Updated", "john@example.com", UserRole.CONTENT_CREATOR);
         when(userService.changeName(eq(userId), eq("John Updated"))).thenReturn(updatedUser);
         
         // Act & Assert
@@ -154,6 +161,7 @@ class UserControllerTest {
         verify(userService, times(1)).changeName(userId, "John Updated");
     }
     
+    @SuppressWarnings("null")
     @Test
     void testUpdateUser_nonExistingUserRequested_returnsNotFound() throws Exception {
         // Arrange

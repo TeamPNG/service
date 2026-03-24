@@ -3,6 +3,7 @@ package ro.unibuc.prodeng.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ro.unibuc.prodeng.IntegrationTestBase;
+import ro.unibuc.prodeng.model.UserRole;
 import ro.unibuc.prodeng.repository.TodoRepository;
 import ro.unibuc.prodeng.repository.UserRepository;
 import ro.unibuc.prodeng.request.CreateTodoRequest;
@@ -37,8 +38,9 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
         userRepository.deleteAll();
     }
 
-    private void createUser(String name, String email) throws Exception {
-        CreateUserRequest request = new CreateUserRequest(name, email);
+    @SuppressWarnings("null")
+private void createUser(String name, String email) throws Exception {
+        CreateUserRequest request = new CreateUserRequest(name, email, UserRole.CONTENT_CREATOR);
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,6 +51,7 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
     private String createTodo(String description, String assigneeEmail) throws Exception {
         CreateTodoRequest request = new CreateTodoRequest(description, assigneeEmail);
 
+        @SuppressWarnings("null")
         String response = mockMvc.perform(post("/api/todos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -96,7 +99,8 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.length()").value(1));
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void testSetDone_toggleDoneStatus_updatesStatusCorrectly() throws Exception {
         // Arrange
         createUser("Alice", "alice@example.com");
@@ -116,7 +120,8 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.done").value(false));
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void testAssign_reassignToDifferentUser_updateAssigneeSuccessfully() throws Exception {
         // Arrange
         createUser("Alice", "alice@example.com");
@@ -132,7 +137,8 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.assigneeEmail").value("bob@example.com"));
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void testEditDescription_validNewDescription_updatesDescriptionSuccessfully() throws Exception {
         // Arrange
         createUser("Alice", "alice@example.com");
@@ -172,7 +178,8 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.error").value("Entity: " + nonExistentId + " was not found"));
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void testCreateTodo_nonExistentAssignee_returnsNotFound() throws Exception {
         // Arrange
         CreateTodoRequest request = new CreateTodoRequest("Buy milk", "nonexistent@example.com");
@@ -185,7 +192,8 @@ class TodoControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.error").exists());
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void testSetDone_nonExistentTodo_returnsNotFound() throws Exception {
         // Arrange
         String nonExistentId = "nonexistent-todo-id";
