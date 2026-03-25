@@ -28,4 +28,16 @@ public class CommentController {
     public ResponseEntity<List<CommentResponse>> getCommentsByImage(@PathVariable String imageId) {
         return ResponseEntity.ok(commentService.getCommentsByImage(imageId));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommentResponse> getCommentById(@PathVariable String id) {
+        CommentResponse comment = commentService.getCommentById(id);
+        return ResponseEntity.ok(comment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable String id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.noContent().build();
+    }
 }

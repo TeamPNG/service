@@ -146,12 +146,16 @@ POST http://localhost:8080/api/comments
 Content-Type: application/json
 
 {
-    "imageId": "test-image-123",
+    "imageId": "69b989ea58f58d586598dab1",
     "userEmail": "test@email.com",
-    "text": "Amazing work on the architecture!"
+    "text": "Aww <3"
 }
 
 ### Get comments for a specific image
-GET http://localhost:8080/api/comments/image/test-image-123
+GET http://localhost:8080/api/comments/image/69b989ea58f58d586598dab1
 
-#
+### Get a single comment by ID
+GET http://localhost:8080/api/comments/69b98bf658f58d586598dab3
+
+### Delete a comment
+DELETE http://localhost:8080/api/comments/69b98a8358f58d586598dab2
