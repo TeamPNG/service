@@ -7,7 +7,7 @@ public record CreateCommentRequest(
     String imageId,
 
     @NotBlank(message = "User email is mandatory")
-    String userEmail,
+    String userId,
 
     @NotBlank(message = "Comment text cannot be empty")
     String text
