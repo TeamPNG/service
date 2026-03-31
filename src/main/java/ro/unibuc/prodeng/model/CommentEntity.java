@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 public record CommentEntity(
     @Id String id,
     String imageId,
-    String userEmail,
+    String userId,
     String text,
     LocalDateTime createdAt
 ) {
-    public CommentEntity(String imageId, String userEmail, String text) {
-        this(null, imageId, userEmail, text, LocalDateTime.now());
+    public CommentEntity(String imageId, String userId, String text) {
+        this(null, imageId, userId, text, LocalDateTime.now());
     }
 }
