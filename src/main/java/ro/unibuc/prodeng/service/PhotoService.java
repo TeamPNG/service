@@ -80,6 +80,7 @@ public class PhotoService {
         PhotoEntity saved = photoRepository.save(photo);
         return toResponse(saved);
     }
+    //Test
 
     @SuppressWarnings("null")
     public void deletePhoto(String id, String userId) {
