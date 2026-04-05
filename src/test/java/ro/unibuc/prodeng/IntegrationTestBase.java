@@ -5,7 +5,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
@@ -17,6 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Tag("IntegrationTest")
 public abstract class IntegrationTestBase {
+    @SuppressWarnings("resource")
     private static final MongoDBContainer mongoDBContainer =
             new MongoDBContainer("mongo:6.0.20")
                     .withExposedPorts(27017)
@@ -25,6 +26,7 @@ public abstract class IntegrationTestBase {
 
     static {
         mongoDBContainer.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(mongoDBContainer::stop));
     }
 
     @DynamicPropertySource
