@@ -18,20 +18,23 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("IntegrationTest")
 public abstract class IntegrationTestBase {
     @SuppressWarnings("resource")
-    private static final MongoDBContainer mongoDBContainer =
-            new MongoDBContainer("mongo:6.0.20")
-                    .withExposedPorts(27017)
-                    .withSharding()
-                    .withLabel("ro.unibuc.prodeng", "integration-test-mongo");
+    private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:6.0.20")
+            .withExposedPorts(27017)
+            .withSharding()
+            .withLabel("ro.unibuc.prodeng", "integration-test-mongo");
 
     static {
-        mongoDBContainer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(mongoDBContainer::stop));
+        if (System.getenv("MONGODB_CONECTION_URL") == null) {
+            mongoDBContainer.start();
+        }
     }
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
-        String mongoUrl = "mongodb://localhost:" + mongoDBContainer.getMappedPort(27017);
-        registry.add("mongodb.connection.url", () -> mongoUrl);
+        if (mongoDBContainer.isRunning()) {
+            String mongoUrl = "mongodb://localhost:" + mongoDBContainer.getMappedPort(27017);
+            registry.add("mongodb.connection.url", () -> mongoUrl);
+        }
     }
+
 }
