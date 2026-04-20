@@ -56,10 +56,10 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                sh """
-                    echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
-                    docker push ${DOCKER_HUB_USERNAME}/prod-eng-img:${env.IMAGE_TAG}
-                """
+                withCredentials([usernamePassword(credentialsId: 'docker_password', passwordVariable: 'DOCKER_PWD', usernameVariable: 'DOCKER_USER')]) {
+                    sh "echo \$DOCKER_PWD | docker login -u \$DOCKER_USER --password-stdin"
+                    sh "docker push ${DOCKER_HUB_USERNAME}/prod-eng-img:${env.IMAGE_TAG}"
+                }
             }
         }
 
