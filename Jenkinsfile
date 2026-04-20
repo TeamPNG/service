@@ -1,0 +1,111 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'jdk21'
+        gradle 'gradle-8'
+    }
+
+    environment {
+        DOCKER_HUB_USERNAME = 'serenell4'
+        DOCKER_PASSWORD = credentials('docker_password')
+        GITHUB_TOKEN = credentials('github_token')
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+
+        stage('Version & Tag') {
+            steps {
+                script {
+                    sh 'git fetch --tag'
+                    env.MAJOR_VERSION = sh(
+                        script: 'git tag | sort -V | tail -1 | cut -d . -f 1',
+                        returnStdout: true
+                    ).trim()
+                    env.MINOR_VERSION = sh(
+                        script: 'git tag | sort -V | tail -1 | cut -d . -f 2',
+                        returnStdout: true
+                    ).trim()
+                    env.PATCH_VERSION = sh(
+                        script: 'git tag | sort -V | tail -1 | cut -d . -f 3',
+                        returnStdout: true
+                    ).trim()
+                    def minorInt = env.MINOR_VERSION.toInteger()
+                    env.IMAGE_TAG = "${env.MAJOR_VERSION}.${minorInt + 1}.${env.PATCH_VERSION}"
+                    echo "Building version: ${env.IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKER_HUB_USERNAME}/prod-eng-img:${env.IMAGE_TAG} ."
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                sh """
+                    echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
+                    docker push ${DOCKER_HUB_USERNAME}/prod-eng-img:${env.IMAGE_TAG}
+                """
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                script {
+                    sh '''
+                        docker ps -q --filter "name=prod-eng" | xargs -r docker stop
+                        docker ps -q --filter "name=mongo" | xargs -r docker stop
+                    '''
+                    sh """
+                        PROD_ENG_IMAGE=${DOCKER_HUB_USERNAME}/prod-eng-img:${env.IMAGE_TAG} docker compose up -d prod-eng mongo
+                    """
+                    sleep 30
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                sh 'MONGODB_CONECTION_URL=mongodb://root:example@host.docker.internal:27017 ./gradlew testIT'
+            }
+        }
+
+        stage('Tag Release') {
+            steps {
+                sh """
+                    git tag ${env.IMAGE_TAG}
+                    git push https://${GITHUB_TOKEN}@github.com/TeamPNG/service.git ${env.IMAGE_TAG}
+                """
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/build/test-results/**/*.xml'
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: 'build/reports/tests/test',
+                reportFiles: 'index.html',
+                reportName: 'Test Report'
+            ])
+            sh 'docker logout'
+        }
+    }
+}
