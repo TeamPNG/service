@@ -88,7 +88,7 @@ pipeline {
             steps {
                 sh """
                     git tag ${env.IMAGE_TAG}
-                    git push https://${GITHUB_TOKEN}@github.com/TeamPNG/service.git ${env.IMAGE_TAG}
+                    git push https://${GITHUB_TOKEN}@github.com/liviub6/TeamPNG/service.git ${env.IMAGE_TAG}
                 """
             }
         }
