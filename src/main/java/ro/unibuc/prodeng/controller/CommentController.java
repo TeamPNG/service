@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ro.unibuc.prodeng.request.CreateCommentRequest;
 import ro.unibuc.prodeng.response.CommentResponse;
 import ro.unibuc.prodeng.service.CommentService;
+import ro.unibuc.prodeng.service.MetricsService;
 
 import java.util.List;
 
@@ -15,18 +16,34 @@ import java.util.List;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-    @Autowired
-    private CommentService commentService;
+    private final CommentService commentService;
+    private final MetricsService metricsService;
+
+    public CommentController(CommentService commentService, MetricsService metricsService) {
+        this.commentService = commentService;
+        this.metricsService = metricsService;
+    }
 
     @PostMapping
     public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CreateCommentRequest request) {
-        CommentResponse response = commentService.createComment(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+       try {
+            CommentResponse response = commentService.createComment(request);
+
+            metricsService.recordCommentCreated();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+
+           metricsService.recordCommentFailed();
+           throw e;
+        }   
     }
 
     @GetMapping("/image/{imageId}")
     public ResponseEntity<List<CommentResponse>> getCommentsByImage(@PathVariable String imageId) {
-        return ResponseEntity.ok(commentService.getCommentsByImage(imageId));
+        return metricsService.getCommentLookupTimer().record(() ->
+            ResponseEntity.ok(commentService.getCommentsByImage(imageId))
+        );
     }
 
     @GetMapping("/{id}")

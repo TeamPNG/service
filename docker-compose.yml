@@ -1,5 +1,6 @@
 services:
   prod-eng:
+    build: .
     image: ${PROD_ENG_IMAGE:-prod-eng-img}
     ports:
       - 8080:8080
