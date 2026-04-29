@@ -17,6 +17,8 @@ import ro.unibuc.prodeng.response.PhotoResponse;
 import ro.unibuc.prodeng.service.PhotoService;
 import ro.unibuc.prodeng.exception.EntityNotFoundException;
 import ro.unibuc.prodeng.exception.GlobalExceptionHandler;
+import ro.unibuc.prodeng.metrics.AppMetrics;
+import io.micrometer.core.instrument.Timer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +39,9 @@ class PhotoControllerTest {
     @Mock
     private PhotoService photoService;
 
+    @Mock
+    private AppMetrics appMetrics;
+
     @InjectMocks
     private PhotoController photoController;
 
@@ -48,6 +53,13 @@ class PhotoControllerTest {
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
         objectMapper = new ObjectMapper();
+        
+        // Mock AppMetrics methods
+        @SuppressWarnings("unchecked")
+        Timer.Sample mockSample = mock(Timer.Sample.class);
+        when(appMetrics.startInvocationTimer()).thenReturn(mockSample);
+        doNothing().when(appMetrics).stopInvocationTimer(any(), anyString());
+        doNothing().when(appMetrics).incrementInvocationCount(anyString());
     }
 
     // ==================== Get All Photos ====================
