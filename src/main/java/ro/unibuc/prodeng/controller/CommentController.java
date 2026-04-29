@@ -41,6 +41,9 @@ public class CommentController {
 
     @GetMapping("/image/{imageId}")
     public ResponseEntity<List<CommentResponse>> getCommentsByImage(@PathVariable String imageId) {
+        
+        metricsService.recordApiCall();
+        
         return metricsService.getCommentLookupTimer().record(() ->
             ResponseEntity.ok(commentService.getCommentsByImage(imageId))
         );
@@ -48,6 +51,9 @@ public class CommentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentResponse> getCommentById(@PathVariable String id) {
+        
+        metricsService.recordApiCall();
+        
         CommentResponse comment = commentService.getCommentById(id);
         return ResponseEntity.ok(comment);
     }
