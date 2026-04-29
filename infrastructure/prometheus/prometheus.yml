@@ -23,7 +23,6 @@ scrape_configs:
     static_configs:
       - targets: ['prod-eng:8080']
 
-# Rules and alerts are read from the specified file(s)
 rule_files:
   - app-alerts.yml
   - canary-alerts.yml
