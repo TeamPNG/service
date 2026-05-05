@@ -6,14 +6,14 @@ route:
   group_wait: 10s
   group_interval: 10s
   repeat_interval: 1m
-  receiver: 'email'
-  
+  receiver: 'comment-alerts-receiver'
+
 receivers:
-- name: 'email'
+- name: 'comment-alerts-receiver'
   email_configs:
-  - to: 'EMAIL@gmail.com'
-    from: 'EMAIL@gmail.com'
-    smarthost: smtp.gmail.com:587
-    auth_username: 'EMAIL@gmail.com'
-    auth_identity: 'EMAIL@gmail.com'
-    auth_password: 'GENERATE ONE FROM https://security.google.com/settings/security/apppasswords'
+  - to: 'serenaprogetto17@gmail.com'
+    from: 'alertmanager@monitoring.com'
+    smarthost: 'smtp.gmail.com:587'
+    auth_username: 'serenaprogetto17@gmail.com'
+    auth_password: 'zspa uysu foii wpxs'
+    require_tls: true
