@@ -1,0 +1,35 @@
+groups:
+  - name: CustomCommentAlerts
+    rules:
+      # --- AVAILABILITY: Il servizio commenti è raggiungibile? ---
+      - alert: WARNING-CommentServiceDown
+        expr: up{job="spring-prod-eng-app"} == 0
+        for: 30s
+        labels:
+          severity: warning
+          category: availability
+        annotations:
+          summary: "Comment Service instance {{ $labels.instance }} unreachable"
+          description: "The application target has been down for more than 30 seconds."
+
+      # --- PERFORMANCE: Latenza alta nel recupero commenti? ---
+      - alert: WARNING-HighCommentLatency
+        expr: rate(app_comment_lookup_duration_seconds_sum[5m]) / rate(app_comment_lookup_duration_seconds_count[5m]) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High latency detected for comments"
+          description: "Average comment lookup latency is above 500ms. Current value: {{ $value }}s"
+
+      # --- QUALITY: Troppi errori nella creazione commenti? ---
+      - alert: WARNING-HighCommentErrorRate
+        expr: rate(app_comments_creation_failed_total[5m]) / rate(app_comment_api_calls_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          category: quality
+        annotations:
+          summary: "High failure rate for comments"
+          description: "More than 10% of comment creation attempts are failing. Value: {{ $value }}"
